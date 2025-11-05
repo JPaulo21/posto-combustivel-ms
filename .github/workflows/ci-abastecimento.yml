@@ -1,0 +1,42 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: CI abastecimento-api
+
+# Diz quais eventos irão acionam a pipeline
+on:
+  # Eventos que acionam o workflow(fluxo de trabalho)
+  push:
+    paths:
+      - "abastecimento/**" # "**" pega todos os subdiretorios de abastecimento
+    branches:
+      - "**"
+  pull_request:
+    paths:
+      - "abastecimento/**"
+    branches: [ develop, main ]
+
+jobs:
+  test-coverage:
+    runs-on: ubuntu-lastest # Imagem do executor(servidor que irá rodar o pipeline)
+
+    steps:
+      # Cada step(etapa) pode ter um name e uses/run.
+      # O name é para log e não é obrigatório
+      # O uses é um bloco de código pronto oficial do github action ou da comunidade que é baixado e executado
+      # O run executa comandos diretamente no shell (como se você digitasse no terminal do runner)
+      - name: Checkout do código
+        uses: actions/checkout@v4 # Faz uma espécie git clone e checkout do código do projeto para no executor(servidor)
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+
+      - name: Compilar e testar
+        run: ./gradlew check
