@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.6'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
 }
 
 group = 'com.jp.postocombustivel.ms'
@@ -12,6 +13,57 @@ java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+jacocoTestReport {
+    dependsOn('test')
+    reports {
+        xml.required = false
+        html.required = true
+    }
+
+    classDirectories.setFrom(
+        fileTree(
+            dir: "$buildDir/classes/java/main",
+            include: [
+                'com/jp/postocombustivel/ms/abastecimento/domain/**',
+                'com/jp/postocombustivel/ms/abastecimento/web/**'
+            ],
+            exclude: [
+                'com/jp/postocombustivel/ms/abastecimento/config/**'
+            ]
+        )
+    )
+}
+
+jacocoTestCoverageVerification  {
+    dependsOn('test')
+    violationRules {
+        rule {
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.60 // cobertura mínima de 80%
+            }
+        }
+    }
+
+    classDirectories.setFrom(
+            fileTree(
+                dir: "$buildDir/classes/java/main",
+                include: [
+                    'com/jp/postocombustivel/ms/abastecimento/domain/**',
+                    'com/jp/postocombustivel/ms/abastecimento/web/**'
+                ],
+                exclude: [
+                    'com/jp/postocombustivel/ms/abastecimento/config/**'
+                ]
+            )
+    )
 }
 
 configurations {
